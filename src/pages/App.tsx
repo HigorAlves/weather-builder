@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import RightSide from "components/rightSide";
 import Button from "components/button";
 import "assets/css/home.css";
 
@@ -43,11 +44,12 @@ const App: React.FC = () => {
   }
 
   function getWheater() {
-    const api = "9eff321e2c5bbe21d971daba83cccc1f";
     fetch(
       `http://api.openweathermap.org/data/2.5/find?lat=${
         coords!.latitude
-      }&lon=${coords!.longitude}&units=metric&cnt=15&APPID=${api}`
+      }&lon=${coords!.longitude}&units=metric&cnt=15&APPID=${
+        process.env.REACT_APP_API_KEY
+      }`
     )
       .then(async (result: any) => {
         const cityData = await result.json().then((data: any) => data.list[0]);
@@ -56,27 +58,6 @@ const App: React.FC = () => {
         console.log(cityData);
       })
       .catch(error => console.error(error));
-  }
-
-  function weekDay() {
-    const day: number = new Date().getDay();
-
-    switch (day) {
-      case 0:
-        return "Domingo";
-      case 1:
-        return "Segunda-Feira";
-      case 2:
-        return "Terça-Feira";
-      case 3:
-        return "Quarta-Feira";
-      case 4:
-        return "Quinta-Feira";
-      case 5:
-        return "Sexta-Feira";
-      case 6:
-        return "Sábado";
-    }
   }
 
   function currentTimeNow() {
@@ -104,41 +85,39 @@ const App: React.FC = () => {
     if (load === false) {
       getWheater();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load]);
 
   return (
     <div className="bg-animated">
-      <div className="container-fluid">
-        <section className="right-side">
-          <p>{weekDay()}</p>
-          <small>{data ? data.name + ", " + data.sys.country : null}</small>
-        </section>
-        <div className="center-xs center-sm center-md center-lg">
-          {data && (
+      {data && (
+        <div className="container-fluid">
+          <RightSide city={data.name} country={data.sys.country} />
+          <div className="center-xs center-sm center-md center-lg">
             <img
-              src={`http://openweathermap.org/img/w/${
-                data ? data.weather[0].icon : null
-              }.png`}
+              src={`http://openweathermap.org/img/w/${data.weather[0].icon}.png`}
               alt="Weather Icon"
             />
-          )}
 
-          <h1 style={{ margin: 0, padding: 0 }}>
-            {data ? data.main.temp : 0}˚C
-          </h1>
-          <section className="row center-xs center-sm center-md center-lg">
-            <div className="col-xs-3">
-              <p>Maxima: {data ? data.main.temp_max : null}˚</p>
-            </div>
-            <div className="col-xs-3">
-              <p>Minima: {data ? data.main.temp_min : null}˚</p>
-            </div>
-          </section>
-          <h3>Última atualização:</h3>
-          <p>{lastUpdate}</p>
-          <Button onClick={() => getWheater()} disabled={load} />
+            <h1 style={{ margin: 0, padding: 0 }}>
+              {data ? data.main.temp : 0}˚C
+            </h1>
+            <section className="row center-xs center-sm center-md center-lg">
+              <div className="col-xs-3">
+                <p>Maxima: {data ? data.main.temp_max : null}˚</p>
+              </div>
+              <div className="col-xs-3">
+                <p>Minima: {data ? data.main.temp_min : null}˚</p>
+              </div>
+            </section>
+            <section>
+              <h3>Última atualização:</h3>
+              <p>{lastUpdate}</p>
+            </section>
+            <Button onClick={() => getWheater()} disabled={load} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
