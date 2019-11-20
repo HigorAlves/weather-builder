@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import RightSide from "components/rightSide";
+import MaxAndMinTemp from "components/maxAndMinTemp";
 import Button from "components/button";
 import "assets/css/home.css";
 
@@ -25,6 +26,7 @@ const App: React.FC = () => {
   const [coords, setCoords] = useState<CoordsProps>();
   const [data, setData] = useState<CityData>();
   const [load, setLoad] = useState<boolean>(true);
+  const [ask, setAsk] = useState<boolean>(false);
   const [lastUpdate, setLastUpdate] = useState<string>();
 
   function getLocation(): void {
@@ -38,7 +40,7 @@ const App: React.FC = () => {
         return;
       },
       error => {
-        return { error: true, code: 1 };
+        setAsk(true);
       }
     );
   }
@@ -77,9 +79,24 @@ const App: React.FC = () => {
     );
   }
 
+  function handlePermission() {
+    navigator.permissions.query({ name: "geolocation" }).then(function(result) {
+      result.onchange = function() {
+        if (result.state == "granted") {
+          setAsk(false);
+          getLocation();
+        } else if (result.state == "denied") {
+          setAsk(true);
+          setData(null);
+        }
+      };
+    });
+  }
+
   useEffect(() => {
+    handlePermission();
     getLocation();
-  }, []);
+  }, [handlePermission]);
 
   useEffect(() => {
     if (load === false) {
@@ -99,23 +116,35 @@ const App: React.FC = () => {
               alt="Weather Icon"
             />
 
-            <h1 style={{ margin: 0, padding: 0 }}>
-              {data ? data.main.temp : 0}˚C
-            </h1>
-            <section className="row center-xs center-sm center-md center-lg">
-              <div className="col-xs-3">
-                <p>Maxima: {data ? data.main.temp_max : null}˚</p>
-              </div>
-              <div className="col-xs-3">
-                <p>Minima: {data ? data.main.temp_min : null}˚</p>
-              </div>
-            </section>
+            <MaxAndMinTemp
+              temp={data.main.temp}
+              max={data.main.temp_max}
+              min={data.main.temp_min}
+            />
+
             <section>
               <h3>Última atualização:</h3>
               <p>{lastUpdate}</p>
             </section>
+
             <Button onClick={() => getWheater()} disabled={load} />
           </div>
+        </div>
+      )}
+
+      {ask && (
+        <div className="center-xs center-sm center-md center-lg">
+          <img
+            src={`https://cdn2.iconfinder.com/data/icons/weather-flat-14/64/weather03-512.png`}
+            alt="Weather Icon"
+            width="200"
+          />
+          <h1>Opss!</h1>
+          <p>Precisamos de sua localização para iniciar</p>
+          <p>
+            Acesse as configurações do seu navegador e autorize este site a
+            visualizar sua localização
+          </p>
         </div>
       )}
     </div>
