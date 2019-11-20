@@ -3,9 +3,10 @@ Design:
 	☐ Implementar o layout no reactjs
 
 React:
-	☐ Configurar o react com typescript
+	✔ Configurar o react com typescript @done(19-11-20 12:13)
 	☐ Configurar Husky
 	☐ Configurar better commits
+	✔ Configurar React Router Dom @done(19-11-20 13:21)
 	☐ Implementar o sistema de geo nativo do browser
 	☐ Implementar a call da API do tempo
 	☐ Renderizar na tela os dados da API
