@@ -1,0 +1,11 @@
+Design:
+	☐ Redesenhar o layout para ser mais bonito e visualmente agradavel
+	☐ Implementar o layout no reactjs
+
+React:
+	☐ Configurar o react com typescript
+	☐ Configurar Husky
+	☐ Configurar better commits
+	☐ Implementar o sistema de geo nativo do browser
+	☐ Implementar a call da API do tempo
+	☐ Renderizar na tela os dados da API
