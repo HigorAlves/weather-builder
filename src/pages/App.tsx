@@ -57,7 +57,6 @@ const App: React.FC = () => {
         const cityData = await result.json().then((data: any) => data.list[0]);
         setData(cityData);
         currentTimeNow();
-        console.log(cityData);
       })
       .catch(error => console.error(error));
   }
